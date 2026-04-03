@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollIndicator();
     initContactForm();
     initProjectLinks();
+    initCertificateModal();  // ✅ NEW: Certificate modal
 });
 
 // ===== NAVBAR SCROLL EFFECT =====
@@ -70,6 +71,37 @@ function initScrollIndicator() {
     });
 }
 
+// ===== CERTIFICATE MODAL FUNCTIONALITY ✅ NEW =====
+function initCertificateModal() {
+    // Handle multiple certificates
+    document.querySelectorAll('.cert-img').forEach(img => {
+        img.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent any default behavior
+            
+            const src = this.getAttribute('src');
+            const title = this.getAttribute('data-cert-title');
+            const desc = this.getAttribute('data-cert-desc');
+            
+            // Update modal content dynamically
+            const modalImg = document.getElementById('modalCertImg');
+            const modalTitle = document.getElementById('modalCertTitle');
+            const modalDesc = document.getElementById('modalCertDesc');
+            const modalLabel = document.getElementById('certModalLabel');
+            
+            if (modalImg && modalTitle && modalDesc && modalLabel) {
+                modalImg.src = src;
+                modalTitle.textContent = title;
+                modalDesc.textContent = desc;
+                modalLabel.textContent = title + ' Certificate';
+                
+                // Trigger modal open (Bootstrap will handle it via data-bs-toggle)
+                const modal = new bootstrap.Modal(document.getElementById('certModal'));
+                modal.show();
+            }
+        });
+    });
+}
+
 // ===== ACTIVE NAV LINK =====
 function updateActiveNav() {
     const sections = document.querySelectorAll('section[id]');
@@ -97,6 +129,8 @@ window.addEventListener('scroll', updateActiveNav);
 // ===== CONTACT FORM =====
 function initContactForm() {
     const form = document.getElementById('contactForm');
+    if (!form) return;
+    
     const submitBtn = form.querySelector('button[type="submit"]');
     
     form.addEventListener('submit', function(e) {
@@ -116,7 +150,7 @@ function initContactForm() {
     });
 }
 
-// ===== PROJECT LINKS (Replace with your actual links) =====
+// ===== PROJECT LINKS =====
 function initProjectLinks() {
     const projectLinks = document.querySelectorAll('.project-overlay a');
     projectLinks.forEach(link => {
@@ -131,55 +165,10 @@ function initProjectLinks() {
 window.addEventListener('scroll', function() {
     const scrolled = window.pageYOffset;
     const hero = document.querySelector('.hero-section');
-    const rate = scrolled * -0.5;
-    hero.style.transform = `translateY(${rate}px)`;
-});
-
-// ===== COUNTER ANIMATION (Optional) =====
-function animateCounters() {
-    const counters = document.querySelectorAll('.counter');
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-target'));
-        const increment = target / 100;
-        let current = 0;
-        
-        const updateCounter = () => {
-            if (current < target) {
-                current += increment;
-                counter.textContent = Math.floor(current) + '+';
-                requestAnimationFrame(updateCounter);
-            } else {
-                counter.textContent = target + '+';
-            }
-        };
-        
-        updateCounter();
-    });
-}
-
-// ===== TYPEWRITER EFFECT (Optional for hero text) =====
-function initTypewriter() {
-    const heroText = "Full Stack Developer";
-    const typewriterElement = document.querySelector('.typewriter');
-    
-    if (typewriterElement) {
-        let i = 0;
-        function typeWriter() {
-            if (i < heroText.length) {
-                typewriterElement.textContent += heroText.charAt(i);
-                i++;
-                setTimeout(typeWriter, 100);
-            }
-        }
-        typeWriter();
+    if (hero) {
+        const rate = scrolled * -0.5;
+        hero.style.transform = `translateY(${rate}px)`;
     }
-}
-
-// ===== MOBILE MENU SMOOTH CLOSE =====
-document.querySelector('.navbar-toggler').addEventListener('click', function() {
-    setTimeout(() => {
-        window.scrollTo(0, 0);
-    }, 300);
 });
 
 // ===== BACK TO TOP BUTTON =====
@@ -221,7 +210,6 @@ createBackToTop();
 
 // ===== INITIALIZE ALL FEATURES =====
 window.addEventListener('load', function() {
-    // Small delay for better performance
     setTimeout(() => {
         document.body.classList.add('loaded');
     }, 500);
